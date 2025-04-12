@@ -1,0 +1,187 @@
+<div id="projectManagementContent" style="display: none;">
+    <h1 class="page-title">
+        <i class="fas fa-project-diagram"></i>
+        Project Management Dashboard
+    </h1>
+
+    <div class="dashboard-grid">
+        <!-- Project Overview Section -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2 class="section-title">Project Overview</h2>
+                <button class="file-manager-btn" id="createNewProjectBtn">
+                    <i class="fas fa-plus"></i> New Project
+                </button>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="projects-table">
+                    <thead>
+                        <tr>
+                            <th>Project Name</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Budget (UGX)</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectsManagementTable">
+                        <!-- Projects will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Project Details Section -->
+        <div class="dashboard-section" id="projectDetailsSection" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title" id="selectedProjectTitle">Project Details</h2>
+                <div class="project-actions">
+                    <button class="file-manager-btn secondary" id="editProjectBtn">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="file-manager-btn" id="approveActivitiesBtn">
+                        <i class="fas fa-check-circle"></i> Approve Activities
+                    </button>
+                </div>
+            </div>
+            
+            <div class="project-stats">
+                <div class="stat-card">
+                    <div class="stat-title">Total Budget</div>
+                    <div class="stat-value" id="projectTotalBudget">UGX 0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Funds Allocated</div>
+                    <div class="stat-value" id="projectFundsAllocated">UGX 0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Funds Spent</div>
+                    <div class="stat-value" id="projectFundsSpent">UGX 0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Completion</div>
+                    <div class="stat-value" id="projectCompletion">0%</div>
+                </div>
+            </div>
+            
+            <div class="project-progress-chart">
+                <canvas id="projectProgressChart" height="150"></canvas>
+            </div>
+            
+            <div class="section-header" style="margin-top: 20px;">
+                <h3 class="section-title">Project Activities</h3>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="activities-table">
+                    <thead>
+                        <tr>
+                            <th>Activity Name</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Budget (UGX)</th>
+                            <th>Status</th>
+                            <th>Approval</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectActivitiesTable">
+                        <!-- Activities will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section-header" style="margin-top: 20px;">
+                <h3 class="section-title">Budget Breakdown</h3>
+                <button class="file-manager-btn secondary" id="exportBudgetBtn">
+                    <i class="fas fa-download"></i> Export Budget
+                </button>
+            </div>
+            
+            <div class="budget-breakdown">
+                <canvas id="budgetChart" height="150"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create/Edit Project Modal -->
+    <div class="project-modal" id="projectFormModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="projectModalTitle">Create New Project</h3>
+                <button class="close-btn" onclick="closeModal('projectFormModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="projectManagementForm">
+                    <input type="hidden" id="projectId">
+                    <div class="form-group">
+                        <label for="projectName">Project Name*</label>
+                        <input type="text" id="projectName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectDescription">Description</label>
+                        <textarea id="projectDescription" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectStartDate">Start Date*</label>
+                        <input type="date" id="projectStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectEndDate">End Date*</label>
+                        <input type="date" id="projectEndDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectBudget">Total Budget (UGX)*</label>
+                        <input type="number" id="projectBudget" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectFundingSource">Funding Source*</label>
+                        <select id="projectFundingSource" required>
+                            <option value="General Funds">General Funds</option>
+                            <option value="Donation">Specific Donation</option>
+                            <option value="Grant">Grant Funding</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="file-manager-btn secondary" onclick="closeModal('projectFormModal')">Cancel</button>
+                <button class="file-manager-btn" id="saveProjectBtn">Save Project</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Approve Activities Modal -->
+    <div class="project-modal" id="approveActivitiesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Approve Pending Activities</h3>
+                <button class="close-btn" onclick="closeModal('approveActivitiesModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="activities-table">
+                        <thead>
+                            <tr>
+                                <th>Activity Name</th>
+                                <th>Budget (UGX)</th>
+                                <th>Requested By</th>
+                                <th>Approve</th>
+                                <th>Reject</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pendingActivitiesTable">
+                            <!-- Pending activities will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="file-manager-btn secondary" onclick="closeModal('approveActivitiesModal')">Close</button>
+                <button class="file-manager-btn" id="saveApprovalsBtn">Save Approvals</button>
+            </div>
+        </div>
+    </div>
+</div>
